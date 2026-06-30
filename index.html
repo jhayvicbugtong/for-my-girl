@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Favorite Person ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
+</head>
+<body>
+
+    <div class="heart-bg" id="hearts-container"></div>
+
+    <div class="container">
+        
+        <!-- ANNIVERSARY MESSAGE -->
+        <div class="anniversary-header">
+            <h2>Our Anniversary 💕</h2>
+            <p class="anniversary-date">March 16, 2027</p>
+            <p class="anniversary-msg">The day our forever begins...</p>
+        </div>
+
+        <!-- COUNTDOWN TIMER -->
+        <div class="countdown-container">
+            <div class="countdown-title" id="countdown-title">⏳ Countdown to our Anniversary</div>
+            <div class="timer" id="countdown">
+                <div class="time-box"><div id="days">00</div><span>Days</span></div>
+                <div class="time-box"><div id="hours">00</div><span>Hrs</span></div>
+                <div class="time-box"><div id="minutes">00</div><span>Mins</span></div>
+                <div class="time-box"><div id="seconds">00</div><span>Secs</span></div>
+            </div>
+        </div>
+
+        <!-- REASONS I LOVE YOU -->
+        <div class="love-card">
+            <h1>Reasons I Love You ❤️</h1>
+            <div class="reason-display" id="reason-text">
+                Click the button below to reveal a reason...
+            </div>
+            <button class="action-btn" onclick="revealReason()">Click to Reveal ✨</button>
+        </div>
+
+        <!-- MILESTONES SECTION -->
+        <div class="milestones-card">
+            <h2>Our Milestones 🎉</h2>
+            <div class="milestones-list" id="milestones-list">
+                <div class="milestone-item" data-date="2026-06-30">
+                    <span class="milestone-date">June 30, 2026</span>
+                    <span class="milestone-event">Today ✨</span>
+                </div>
+                <div class="milestone-item">
+                    <span class="milestone-date">March 16, 2027</span>
+                    <span class="milestone-event">Our Anniversary 🎊</span>
+                </div>
+            </div>
+            <input type="text" id="milestoneInput" class="milestone-input" placeholder="Add a special date...">
+            <button class="action-btn secondary" onclick="addMilestone()">Add Milestone ➕</button>
+        </div>
+
+        <!-- REMINDER SECTION -->
+        <div class="reminder-card">
+            <h2>Set a Reminder 🔔</h2>
+            <label class="checkbox-label">
+                <input type="checkbox" id="reminderToggle" onchange="toggleReminder()">
+                <span>Remind me on anniversary morning</span>
+            </label>
+            <p class="reminder-info" id="reminderInfo"></p>
+        </div>
+
+        <!-- DAILY EMAIL SECTION -->
+        <div class="email-card">
+            <h2>Daily Love Message 💌</h2>
+            <label class="checkbox-label">
+                <input type="checkbox" id="dailyEmailToggle" onchange="toggleDailyEmail()">
+                <span>Send me a daily reason at 9:00 AM</span>
+            </label>
+            <p class="email-info" id="emailInfo"></p>
+            <p class="email-note" id="emailNote">Setup required. Click below 👇</p>
+            <button class="action-btn secondary" onclick="setupDailyEmail()" id="setupEmailBtn">Setup Daily Email ⚙️</button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

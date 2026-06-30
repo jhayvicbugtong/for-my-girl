@@ -1,0 +1,12 @@
+{
+  "name": "for-my-girl",
+  "version": "1.0.0",
+  "description": "Anniversary countdown and daily love messages",
+  "main": "send-email.js",
+  "scripts": {
+    "send-email": "node send-email.js"
+  },
+  "dependencies": {
+    "@emailjs/nodejs": "^3.7.0"
+  }
+}
