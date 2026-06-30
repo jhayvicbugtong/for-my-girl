@@ -1,0 +1,646 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+    --card-color: #ffffff;
+    --primary-color: #ff4d6d;
+    --text-color: #4a4a4a;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* FLOATING HEARTS BACKGROUND */
+.heart-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.heart {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 77, 109, 0.4);
+    animation: animate 25s linear infinite;
+    bottom: -150px;
+    clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+}
+
+@keyframes animate {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
+/* CONTAINER FOR MAIN CONTENT */
+.container {
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* COUNTDOWN STYLES */
+.countdown-container {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.countdown-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ff4d6d;
+}
+
+.timer {
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+}
+
+.time-box {
+    font-size: 1.2rem;
+}
+.time-box span {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+/* SCRATCH / REVEAL CARD STYLES */
+.love-card {
+    background: var(--card-color);
+    padding: 35px 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+    border: 2px solid #fff;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-top: 0;
+}
+
+.reason-display {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-style: italic;
+    margin: 20px 0;
+    line-height: 1.5;
+    color: #555;
+    transition: opacity 0.2s ease;
+}
+
+.action-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.3);
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.action-btn:hover {
+    background-color: #ff758f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 77, 109, 0.4);
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
+
+.action-btn.secondary {
+    background-color: #c75d8a;
+    box-shadow: 0 6px 20px rgba(199, 93, 138, 0.3);
+}
+
+.action-btn.secondary:hover {
+    background-color: #d97aa3;
+}
+
+/* ANNIVERSARY HEADER */
+.anniversary-header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: slideDown 0.6s ease-out;
+}
+
+.anniversary-header h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(255, 77, 109, 0.2);
+}
+
+.anniversary-date {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #ff758f;
+    margin: 8px 0;
+}
+
+.anniversary-msg {
+    font-size: 1.1rem;
+    color: #888;
+    font-style: italic;
+    margin: 10px 0 0 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* MILESTONES CARD */
+.milestones-card {
+    background: var(--card-color);
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+    border: 2px solid #fff;
+    margin: 20px 0;
+}
+
+.milestones-card h2 {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-top: 0;
+}
+
+.milestones-list {
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.milestone-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: linear-gradient(135deg, #ffeef5 0%, #fff0f7 100%);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.milestone-date {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.milestone-event {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.milestone-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ffe0ea;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.milestone-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(255, 77, 109, 0.2);
+}
+
+/* REMINDER CARD */
+.reminder-card {
+    background: var(--card-color);
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+    border: 2px solid #fff;
+    margin: 20px 0 40px 0;
+}
+
+.reminder-card h2 {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-top: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.reminder-info {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 15px;
+    font-style: italic;
+    min-height: 20px;
+}
+
+/* EMAIL CARD */
+.email-card {
+    background: var(--card-color);
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+    border: 2px solid #fff;
+    margin: 20px 0 40px 0;
+}
+
+.email-card h2 {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-top: 0;
+}
+
+.email-info {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 12px;
+    font-style: italic;
+    min-height: 20px;
+}
+
+.email-note {
+    font-size: 0.85rem;
+    color: #ff758f;
+    margin: 10px 0;
+    font-weight: 500;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* TABLETS (768px and up) */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .anniversary-header h2 {
+        font-size: 2rem;
+    }
+
+    .anniversary-date {
+        font-size: 1.1rem;
+    }
+
+    .anniversary-msg {
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .countdown-title {
+        font-size: 0.85rem;
+    }
+
+    .time-box {
+        font-size: 1rem;
+    }
+
+    .time-box span {
+        font-size: 0.65rem;
+    }
+
+    .reason-display {
+        font-size: 1rem;
+        min-height: 80px;
+    }
+
+    .love-card,
+    .milestones-card,
+    .reminder-card,
+    .email-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .milestones-card h2,
+    .reminder-card h2,
+    .email-card h2 {
+        font-size: 1.2rem;
+    }
+
+    .action-btn {
+        padding: 14px 28px;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    .checkbox-label {
+        font-size: 1rem;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* PHONES (480px and up) */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+        justify-content: flex-start;
+    }
+
+    .container {
+        max-width: 100%;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .anniversary-header {
+        margin-bottom: 20px;
+    }
+
+    .anniversary-header h2 {
+        font-size: 1.6rem;
+        margin: 5px 0;
+    }
+
+    .anniversary-date {
+        font-size: 1rem;
+        margin: 5px 0;
+    }
+
+    .anniversary-msg {
+        font-size: 0.95rem;
+        margin-top: 8px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+        margin: 10px 0 0 0;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    .countdown-container {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+    }
+
+    .countdown-title {
+        font-size: 0.75rem;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    .timer {
+        gap: 4px;
+    }
+
+    .time-box {
+        font-size: 0.9rem;
+        flex: 1;
+    }
+
+    .time-box div {
+        font-size: 1rem;
+    }
+
+    .time-box span {
+        font-size: 0.6rem;
+        margin-top: 2px;
+    }
+
+    .love-card,
+    .milestones-card,
+    .reminder-card,
+    .email-card {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        border: 1.5px solid #fff;
+    }
+
+    .reason-display {
+        font-size: 0.95rem;
+        min-height: 70px;
+        margin: 15px 0;
+        line-height: 1.4;
+    }
+
+    .action-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        min-height: 44px;
+        border-radius: 40px;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .milestone-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px 12px;
+        margin: 6px 0;
+    }
+
+    .milestone-date {
+        font-size: 0.9rem;
+    }
+
+    .milestone-event {
+        font-size: 0.9rem;
+    }
+
+    .milestone-input {
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+
+    .checkbox-label {
+        font-size: 0.95rem;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .reminder-info {
+        font-size: 0.85rem;
+        margin-top: 12px;
+    }
+
+    .milestones-list {
+        max-height: 250px;
+    }
+}
+
+/* SMALL PHONES (less than 360px) */
+@media (max-width: 360px) {
+    .anniversary-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .countdown-title {
+        font-size: 0.7rem;
+    }
+
+    .time-box {
+        font-size: 0.8rem;
+    }
+
+    .time-box div {
+        font-size: 0.9rem;
+    }
+
+    .time-box span {
+        font-size: 0.55rem;
+    }
+
+    h1 {
+        font-size: 1.1rem;
+    }
+
+    .love-card,
+    .milestones-card,
+    .reminder-card,
+    .email-card {
+        padding: 12px;
+    }
+
+    .reason-display {
+        font-size: 0.9rem;
+        min-height: 60px;
+    }
+
+    .action-btn {
+        padding: 11px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* LARGE SCREENS (1024px and up) */
+@media (min-width: 1024px) {
+    body {
+        padding: 40px 20px;
+    }
+
+    .container {
+        max-width: 500px;
+    }
+
+    .anniversary-header h2 {
+        font-size: 3rem;
+    }
+
+    .anniversary-date {
+        font-size: 1.5rem;
+    }
+
+    .countdown-container {
+        padding: 20px;
+    }
+
+    .love-card,
+    .milestones-card,
+    .reminder-card,
+    .email-card {
+        padding: 40px;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(255, 77, 109, 0.4);
+    }
+}
