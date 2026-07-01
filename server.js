@@ -21,6 +21,32 @@ const app = express();
 const dbPath = path.join(__dirname, 'milestones.db');
 const PORT = process.env.PORT || 3000;
 
+const fs = require('fs');
+const os = require('os');
+
+// Startup diagnostics to help detect why a host may exit early
+console.log('--- startup diagnostics ---');
+console.log('Node version:', process.version);
+console.log('Platform:', process.platform);
+console.log('cwd:', process.cwd());
+console.log('__dirname:', __dirname);
+console.log('ENV keys present:', Object.keys(process.env).filter(k => k.startsWith('EMAILJS') || k === 'RECIPIENT_EMAIL'));
+console.log('Modules available:', {
+    sqlite3: !!sqlite3Module,
+    cron: !!cron,
+    emailjs: !!emailjs
+});
+
+try {
+    const testPath = path.join(os.tmpdir(), `render-write-test-${Date.now()}.tmp`);
+    fs.writeFileSync(testPath, 'ok');
+    fs.unlinkSync(testPath);
+    console.log('Writable tmpdir OK:', os.tmpdir());
+} catch (err) {
+    console.error('Tmpdir write test failed:', err && err.message);
+}
+console.log('--- end diagnostics ---');
+
 const requiredEnv = [
     'EMAILJS_PUBLIC_KEY',
     'EMAILJS_PRIVATE_KEY',
