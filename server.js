@@ -100,13 +100,21 @@ async function sendLoveEmail() {
         day: 'numeric'
     });
 
+    const subject = 'A little love note for you 💌';
+    const message = `Good morning, my love.\n\nI hope this message makes your day as sweet as you make mine. Today’s reason: ${randomReason}\n\nCan’t wait to celebrate every moment with you.`;
+
     return emailjs.send(
         process.env.EMAILJS_SERVICE_ID,
         process.env.EMAILJS_TEMPLATE_ID,
         {
             to_email: process.env.RECIPIENT_EMAIL,
+            subject,
+            greeting: 'Hi my love,',
+            message,
             reason: randomReason,
-            date: formattedDate
+            date: formattedDate,
+            closing: 'Forever yours,',
+            signature: 'Your ❤️'
         }
     );
 }

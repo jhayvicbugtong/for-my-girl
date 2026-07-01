@@ -238,8 +238,13 @@ emailjs.send(
     process.env.EMAILJS_TEMPLATE_ID,
     {
         to_email: process.env.RECIPIENT_EMAIL,
+        subject: 'A little love note for you 💌',
+        greeting: 'Hi my love,',
+        message: `Good morning, my love.\n\nI hope this note fills your day with warmth and joy. Today’s reason: ${randomReason}\n\nCan’t wait to keep making memories with you.`,
         reason: randomReason,
-        date: formattedDate
+        date: formattedDate,
+        closing: 'Forever yours,',
+        signature: 'Your ❤️'
     }
 )
     .then(() => {
