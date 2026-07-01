@@ -19,8 +19,10 @@ const requiredEnv = [
 ];
 
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
-if (missingEnv.length) {
+const emailConfigured = missingEnv.length === 0;
+if (!emailConfigured) {
     console.warn('Warning: Missing email environment variables:', missingEnv.join(', '));
+    console.warn('Email sending and scheduled jobs will be disabled until environment variables are provided.');
 }
 
 const emailReasons = [
@@ -33,11 +35,15 @@ const emailReasons = [
     'How you make even the simplest moments feel magical.'
 ];
 
-if (!missingEnv.length) {
-    emailjs.init({
-        publicKey: process.env.EMAILJS_PUBLIC_KEY,
-        privateKey: process.env.EMAILJS_PRIVATE_KEY,
-    });
+if (emailConfigured) {
+    try {
+        emailjs.init({
+            publicKey: process.env.EMAILJS_PUBLIC_KEY,
+            privateKey: process.env.EMAILJS_PRIVATE_KEY,
+        });
+    } catch (err) {
+        console.error('Failed to initialize EmailJS:', err);
+    }
 }
 
 function getRandomReason() {
@@ -45,7 +51,7 @@ function getRandomReason() {
 }
 
 async function sendLoveEmail() {
-    if (missingEnv.length) {
+    if (!emailConfigured) {
         throw new Error('Email service not configured');
     }
 
@@ -120,6 +126,10 @@ app.delete('/api/milestones/:id', (req, res) => {
 });
 
 app.get('/api/send-email', async (req, res) => {
+    if (!emailConfigured) {
+        return res.status(503).json({ error: 'Email service not configured on server' });
+    }
+
     try {
         await sendLoveEmail();
         res.json({ success: true });
@@ -129,16 +139,33 @@ app.get('/api/send-email', async (req, res) => {
 });
 
 const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 8 * * *';
-const emailJob = new cron.CronJob(emailCronSchedule, async () => {
+if (emailConfigured) {
     try {
-        await sendLoveEmail();
-        console.log('Scheduled email sent successfully.');
-    } catch (error) {
-        console.error('Scheduled email failed:', error);
+        const emailJob = new cron.CronJob(emailCronSchedule, async () => {
+            try {
+                await sendLoveEmail();
+                console.log('Scheduled email sent successfully.');
+            } catch (error) {
+                console.error('Scheduled email failed:', error);
+            }
+        });
+
+        emailJob.start();
+        console.log('Email scheduler started with cron:', emailCronSchedule);
+    } catch (err) {
+        console.error('Failed to start email scheduler:', err);
     }
+} else {
+    console.log('Email scheduler disabled because email config is missing.');
+}
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception:', err);
 });
 
-emailJob.start();
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled rejection at:', promise, 'reason:', reason);
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
