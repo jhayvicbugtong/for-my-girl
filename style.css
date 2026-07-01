@@ -1,12 +1,16 @@
 :root {
-    --bg-gradient: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
-    --card-color: #ffffff;
+    --bg-gradient: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 18%),
+                    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.7), transparent 18%),
+                    linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+    --card-color: rgba(255, 255, 255, 0.85);
     --primary-color: #ff4d6d;
+    --secondary-color: #ff9cb8;
     --text-color: #4a4a4a;
+    --shadow-color: rgba(255, 77, 109, 0.2);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg-gradient);
     color: var(--text-color);
     margin: 0;
@@ -30,6 +34,32 @@ body {
     overflow: hidden;
     z-index: 1;
     pointer-events: none;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 220px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.35);
+    filter: blur(40px);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    right: -10%;
+    width: 240px;
+    height: 240px;
+    background: rgba(255, 255, 255, 0.25);
+    filter: blur(35px);
+    border-radius: 50%;
+    z-index: 0;
 }
 
 .heart {
@@ -62,7 +92,8 @@ body {
     z-index: 2;
     text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    padding: 18px 12px 30px;
 }
 
 /* COUNTDOWN STYLES */
@@ -105,9 +136,9 @@ body {
 .love-card {
     background: var(--card-color);
     padding: 35px 25px;
-    border-radius: 30px;
-    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
-    border: 2px solid #fff;
+    border-radius: 35px;
+    box-shadow: 0 20px 50px rgba(255, 77, 109, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 h1 {
@@ -117,16 +148,20 @@ h1 {
 }
 
 .reason-display {
-    min-height: 100px;
+    min-height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
     font-style: italic;
     margin: 20px 0;
-    line-height: 1.5;
+    line-height: 1.6;
     color: #555;
     transition: opacity 0.2s ease;
+    background: linear-gradient(180deg, rgba(255, 244, 249, 0.95), rgba(255, 229, 237, 0.95));
+    border-radius: 22px;
+    border: 1px solid rgba(255, 120, 143, 0.25);
+    padding: 20px;
 }
 
 .action-btn {
@@ -135,11 +170,11 @@ h1 {
     border: none;
     padding: 16px 32px;
     font-size: 1rem;
-    font-weight: bold;
-    border-radius: 50px;
+    font-weight: 700;
+    border-radius: 999px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.3);
-    transition: all 0.2s ease;
+    box-shadow: 0 8px 26px rgba(255, 77, 109, 0.22);
+    transition: all 0.25s ease;
     width: 100%;
 }
 
@@ -170,10 +205,11 @@ h1 {
 }
 
 .anniversary-header h2 {
-    font-size: 2.5rem;
+    font-family: 'Parisienne', cursive;
+    font-size: 2.8rem;
     color: var(--primary-color);
     margin: 0;
-    text-shadow: 0 2px 4px rgba(255, 77, 109, 0.2);
+    text-shadow: 0 3px 10px rgba(255, 77, 109, 0.18);
 }
 
 .anniversary-date {
@@ -193,7 +229,7 @@ h1 {
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateY(-30px);
     }
     to {
         opacity: 1;
@@ -225,13 +261,16 @@ h1 {
 
 .milestone-item {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
-    padding: 12px 15px;
-    margin: 8px 0;
-    background: linear-gradient(135deg, #ffeef5 0%, #fff0f7 100%);
-    border-radius: 10px;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    background: linear-gradient(135deg, #fff5f8 0%, #ffe3ee 100%);
+    border-radius: 18px;
     border-left: 4px solid var(--primary-color);
+    box-shadow: 0 15px 30px rgba(255, 77, 109, 0.08);
     animation: slideIn 0.4s ease-out;
 }
 
@@ -250,11 +289,20 @@ h1 {
     font-weight: 600;
     color: #555;
     font-size: 0.95rem;
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .milestone-event {
     color: var(--primary-color);
     font-weight: 700;
+    min-width: 0;
+    flex: 1 1 auto;
+    text-align: right;
+}
+
+.milestone-item span:last-child {
+    flex: 0 0 auto;
 }
 
 .milestone-input {
@@ -275,13 +323,35 @@ h1 {
     box-shadow: 0 0 8px rgba(255, 77, 109, 0.2);
 }
 
+.milestone-input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+@media (max-width: 720px) {
+    .milestone-input-group {
+        grid-template-columns: 1fr;
+    }
+
+    .milestone-item {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .milestone-event {
+        text-align: left;
+    }
+}
+
 /* REMINDER CARD */
 .reminder-card {
     background: var(--card-color);
     padding: 25px;
-    border-radius: 30px;
-    box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
-    border: 2px solid #fff;
+    border-radius: 35px;
+    box-shadow: 0 18px 45px rgba(255, 77, 109, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.85);
     margin: 20px 0 40px 0;
 }
 
@@ -315,7 +385,94 @@ h1 {
     min-height: 20px;
 }
 
-/* EMAIL CARD */
+/* MUSIC CARD */
+.music-card {
+    background: var(--card-color);
+    padding: 24px 22px;
+    border-radius: 32px;
+    box-shadow: 0 18px 45px rgba(255, 77, 109, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    margin: 20px 0 20px 0;
+}
+
+.music-card h2 {
+    color: var(--primary-color);
+    font-size: 1.35rem;
+    margin-top: 0;
+}
+
+.music-info {
+    font-size: 0.95rem;
+    color: #7c7c7c;
+    margin-top: 12px;
+    font-style: italic;
+    min-height: 24px;
+}
+
+.audio-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.audio-overlay.hidden {
+    display: none;
+}
+
+.audio-overlay-card {
+    max-width: 320px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid rgba(255, 77, 109, 0.15);
+    border-radius: 24px;
+    padding: 24px 28px;
+    box-shadow: 0 24px 60px rgba(255, 77, 109, 0.18);
+    color: #4a4a4a;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.youtube-input-group,
+.music-file-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.youtube-input-group input,
+.music-file-group input[type="file"] {
+    flex: 1 1 260px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background: #fff;
+    color: #333;
+    font-size: 0.95rem;
+    min-width: 0;
+}
+
+.music-file-group input[type="file"] {
+    cursor: pointer;
+}
+
+.music-player {
+    margin-top: 22px;
+    border-radius: 22px;
+    overflow: hidden;
+    min-height: 240px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
 .email-card {
     background: var(--card-color);
     padding: 25px;
