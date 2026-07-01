@@ -100,8 +100,8 @@ async function sendLoveEmail() {
         day: 'numeric'
     });
 
-    const subject = 'A little love note for you 💌';
-    const message = `Good morning, my love.\n\nI hope this message makes your day as sweet as you make mine. Today’s reason: ${randomReason}\n\nCan’t wait to celebrate every moment with you.`;
+    const subject = 'A sweet little love note for you 💌';
+    const message = `Good morning, my love.\n\nI hope this note brightens your day and reminds you how cherished you are. Today’s reason: ${randomReason}\n\nSending you all my love.`;
 
     return emailjs.send(
         process.env.EMAILJS_SERVICE_ID,
@@ -214,7 +214,7 @@ app.get('/api/send-email', async (req, res) => {
     }
 });
 
-const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 8 * * *';
+const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 9 * * *';
 const emailTimezone = process.env.EMAIL_TIMEZONE || 'Asia/Dubai';
 if (emailConfigured && cron) {
     try {
