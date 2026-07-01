@@ -2,9 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
-const cron = require('cron');
-const emailjs = require('@emailjs/nodejs');
+
+function safeRequire(name) {
+    try {
+        return require(name);
+    } catch (err) {
+        console.warn(`Optional module "${name}" not available: ${err.message}`);
+        return null;
+    }
+}
+
+const sqlite3Module = safeRequire('sqlite3');
+const sqlite3 = sqlite3Module ? sqlite3Module.verbose() : null;
+const cron = safeRequire('cron');
+const emailjs = safeRequire('@emailjs/nodejs');
 
 const app = express();
 const dbPath = path.join(__dirname, 'milestones.db');
@@ -19,7 +30,7 @@ const requiredEnv = [
 ];
 
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
-const emailConfigured = missingEnv.length === 0;
+const emailConfigured = missingEnv.length === 0 && !!emailjs;
 if (!emailConfigured) {
     console.warn('Warning: Missing email environment variables:', missingEnv.join(', '));
     console.warn('Email sending and scheduled jobs will be disabled until environment variables are provided.');
@@ -78,32 +89,44 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-let db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Failed to open file database:', err);
-        console.warn('Falling back to in-memory SQLite database. Milestones will not persist across restarts.');
-        db = new sqlite3.Database(':memory:', (memErr) => {
-            if (memErr) {
-                console.error('Failed to create in-memory database:', memErr);
-                // As a last resort, continue without a database but disable related endpoints
-            }
-        });
-    }
-});
+let db = null;
+let inMemoryStore = { milestones: [], nextId: 1 };
 
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS milestones (
-        id INTEGER PRIMARY KEY,
-        date TEXT,
-        event TEXT
-    )`);
-});
+if (sqlite3) {
+    db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error('Failed to open file database:', err);
+            console.warn('Falling back to in-memory SQLite database. Milestones will not persist across restarts.');
+            db = new sqlite3.Database(':memory:', (memErr) => {
+                if (memErr) {
+                    console.error('Failed to create in-memory database:', memErr);
+                }
+            });
+        }
+    });
+
+    db.serialize(() => {
+        db.run(`CREATE TABLE IF NOT EXISTS milestones (
+            id INTEGER PRIMARY KEY,
+            date TEXT,
+            event TEXT
+        )`);
+    });
+} else {
+    console.warn('sqlite3 not available — using in-memory milestones store. Data will not persist across restarts.');
+}
 
 app.get('/api/milestones', (req, res) => {
-    db.all('SELECT id, date, event FROM milestones ORDER BY id DESC', (err, rows) => {
-        if (err) return res.status(500).json({ error: 'Unable to load milestones' });
-        res.json({ milestones: rows });
-    });
+    if (db) {
+        db.all('SELECT id, date, event FROM milestones ORDER BY id DESC', (err, rows) => {
+            if (err) return res.status(500).json({ error: 'Unable to load milestones' });
+            res.json({ milestones: rows });
+        });
+    } else {
+        // return in-memory milestones (most recent first)
+        const list = [...inMemoryStore.milestones].reverse();
+        res.json({ milestones: list });
+    }
 });
 
 app.post('/api/milestones', (req, res) => {
@@ -112,23 +135,36 @@ app.post('/api/milestones', (req, res) => {
         return res.status(400).json({ error: 'Date and event are required' });
     }
 
-    db.run(
-        'INSERT INTO milestones (date, event) VALUES (?, ?)',
-        [date, event],
-        function (err) {
-            if (err) return res.status(500).json({ error: 'Unable to save milestone' });
-            res.json({ id: this.lastID, date, event });
-        }
-    );
+    if (db) {
+        db.run(
+            'INSERT INTO milestones (date, event) VALUES (?, ?)',
+            [date, event],
+            function (err) {
+                if (err) return res.status(500).json({ error: 'Unable to save milestone' });
+                res.json({ id: this.lastID, date, event });
+            }
+        );
+    } else {
+        const newItem = { id: inMemoryStore.nextId++, date, event };
+        inMemoryStore.milestones.push(newItem);
+        res.json(newItem);
+    }
 });
 
 app.delete('/api/milestones/:id', (req, res) => {
     const milestoneId = Number(req.params.id);
-    db.run('DELETE FROM milestones WHERE id = ?', milestoneId, function (err) {
-        if (err) return res.status(500).json({ error: 'Unable to remove milestone' });
-        if (this.changes === 0) return res.status(404).json({ error: 'Milestone not found' });
+    if (db) {
+        db.run('DELETE FROM milestones WHERE id = ?', milestoneId, function (err) {
+            if (err) return res.status(500).json({ error: 'Unable to remove milestone' });
+            if (this.changes === 0) return res.status(404).json({ error: 'Milestone not found' });
+            res.json({ success: true });
+        });
+    } else {
+        const idx = inMemoryStore.milestones.findIndex(m => m.id === milestoneId);
+        if (idx === -1) return res.status(404).json({ error: 'Milestone not found' });
+        inMemoryStore.milestones.splice(idx, 1);
         res.json({ success: true });
-    });
+    }
 });
 
 app.get('/api/send-email', async (req, res) => {
@@ -145,7 +181,7 @@ app.get('/api/send-email', async (req, res) => {
 });
 
 const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 8 * * *';
-if (emailConfigured) {
+if (emailConfigured && cron) {
     try {
         const emailJob = new cron.CronJob(emailCronSchedule, async () => {
             try {
@@ -162,7 +198,8 @@ if (emailConfigured) {
         console.error('Failed to start email scheduler:', err);
     }
 } else {
-    console.log('Email scheduler disabled because email config is missing.');
+    if (!emailConfigured) console.log('Email scheduler disabled because email config is missing.');
+    else console.log('Email scheduler disabled because cron module is unavailable.');
 }
 
 process.on('uncaughtException', (err) => {
