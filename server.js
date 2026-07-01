@@ -207,19 +207,25 @@ app.get('/api/send-email', async (req, res) => {
 });
 
 const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 8 * * *';
+const emailTimezone = process.env.EMAIL_TIMEZONE || 'Asia/Dubai';
 if (emailConfigured && cron) {
     try {
-        const emailJob = new cron.CronJob(emailCronSchedule, async () => {
-            try {
-                await sendLoveEmail();
-                console.log('Scheduled email sent successfully.');
-            } catch (error) {
-                console.error('Scheduled email failed:', error);
-            }
-        });
+        const emailJob = new cron.CronJob(
+            emailCronSchedule,
+            async () => {
+                try {
+                    await sendLoveEmail();
+                    console.log('Scheduled email sent successfully.');
+                } catch (error) {
+                    console.error('Scheduled email failed:', error);
+                }
+            },
+            null,
+            true,
+            emailTimezone
+        );
 
-        emailJob.start();
-        console.log('Email scheduler started with cron:', emailCronSchedule);
+        console.log('Email scheduler started with cron:', emailCronSchedule, 'timezone:', emailTimezone);
     } catch (err) {
         console.error('Failed to start email scheduler:', err);
     }
