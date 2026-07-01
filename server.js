@@ -78,10 +78,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-const db = new sqlite3.Database(dbPath, (err) => {
+let db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error('Failed to open database:', err);
-        process.exit(1);
+        console.error('Failed to open file database:', err);
+        console.warn('Falling back to in-memory SQLite database. Milestones will not persist across restarts.');
+        db = new sqlite3.Database(':memory:', (memErr) => {
+            if (memErr) {
+                console.error('Failed to create in-memory database:', memErr);
+                // As a last resort, continue without a database but disable related endpoints
+            }
+        });
     }
 });
 
