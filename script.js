@@ -405,6 +405,28 @@ function initializeReminder() {
     }
 }
 
+async function sendLoveEmail() {
+    const status = document.getElementById('emailStatus');
+    status.textContent = 'Sending love email...';
+    status.style.color = '#333';
+
+    try {
+        const response = await fetch(`${apiBase}/api/send-email`);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            status.textContent = '💌 Love email sent successfully!';
+            status.style.color = '#4caf50';
+        } else {
+            status.textContent = 'Oops, could not send the email.';
+            status.style.color = '#ff4d6d';
+        }
+    } catch (error) {
+        status.textContent = 'Network error while sending email.';
+        status.style.color = '#ff4d6d';
+    }
+}
+
 function initializeDefaultMusic() {
     const audio = document.getElementById('backgroundMusic');
     if (!audio) return;
