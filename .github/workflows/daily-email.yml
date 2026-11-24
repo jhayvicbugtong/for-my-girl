@@ -2,7 +2,7 @@ name: Daily Love Email
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 9:00 AM UTC every day
+    - cron: '0 5 * * *'  # 05:00 UTC = 9:00 AM UAE (Asia/Dubai, UTC+4) every day
   workflow_dispatch:     # Allows manual trigger
 
 jobs:

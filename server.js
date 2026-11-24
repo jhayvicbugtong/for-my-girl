@@ -62,15 +62,7 @@ if (!emailConfigured) {
     console.warn('Email sending and scheduled jobs will be disabled until environment variables are provided.');
 }
 
-const emailReasons = [
-    'The way your eyes look when you smile at me.',
-    'How you always make sure I got home safe.',
-    'Your incredible laugh that instantly brightens up my whole day.',
-    'How passionate and dedicated you are when working towards your goals.',
-    'The way you make me feel like I can do anything.',
-    'How you make the ordinary feel unforgettable.',
-    'How you make even the simplest moments feel magical.'
-];
+const { getDailyParagraph } = require('./messages');
 
 if (emailConfigured) {
     try {
@@ -83,16 +75,12 @@ if (emailConfigured) {
     }
 }
 
-function getRandomReason() {
-    return emailReasons[Math.floor(Math.random() * emailReasons.length)];
-}
-
 async function sendLoveEmail() {
     if (!emailConfigured) {
         throw new Error('Email service not configured');
     }
 
-    const randomReason = getRandomReason();
+    const randomReason = getDailyParagraph();
     const formattedDate = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
@@ -214,7 +202,7 @@ app.get('/api/send-email', async (req, res) => {
     }
 });
 
-const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 9 * * *';
+const emailCronSchedule = process.env.EMAIL_SEND_CRON || '0 9 * * *'; // 9:00 AM in EMAIL_TIMEZONE
 const emailTimezone = process.env.EMAIL_TIMEZONE || 'Asia/Dubai';
 if (emailConfigured && cron) {
     try {
