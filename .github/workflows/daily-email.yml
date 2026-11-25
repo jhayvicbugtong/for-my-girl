@@ -2,24 +2,55 @@ name: Daily Love Email
 
 on:
   schedule:
-    - cron: '0 5 * * *'  # 05:00 UTC = 9:00 AM UAE (Asia/Dubai, UTC+4) every day
-  workflow_dispatch:     # Allows manual trigger
+    # UAE (Asia/Dubai) is UTC+4 with no daylight saving.
+    # GitHub sometimes delays or drops scheduled runs, so there are backup times.
+    # Only the first one that runs each day sends the email; the rest skip.
+    - cron: '7 5 * * *'   # 9:07 AM UAE (main)
+    - cron: '37 5 * * *'  # 9:37 AM UAE (backup)
+    - cron: '17 6 * * *'  # 10:17 AM UAE (backup)
+  workflow_dispatch:      # Manual "Run workflow" button always sends
+
+# Never let two runs send at the same time.
+concurrency:
+  group: daily-email
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
 
 jobs:
   send-email:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if today's email was already sent
+        id: check
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          today=$(date -u +%F)
+          count=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-email.yml/runs?event=schedule&status=success&created=%3E%3D${today}" --jq '.total_count')
+          echo "Successful scheduled runs today: $count"
+          if [ "$count" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
-      
+        if: steps.check.outputs.skip != 'true'
+
       - name: Set up Node.js
+        if: steps.check.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Install dependencies
+        if: steps.check.outputs.skip != 'true'
         run: npm install
-      
+
       - name: Send Daily Email
+        if: steps.check.outputs.skip != 'true'
         run: node send-email.js
         env:
           EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
