@@ -1,14 +1,20 @@
 name: Daily Love Email
 
 on:
+  # Main trigger: cron-job.org calls the GitHub API at exactly 9:00 AM UAE
+  # with inputs.source = "timer".
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'Leave as "manual" to always send. "timer" = only send if not already sent today.'
+        required: false
+        default: manual
+
+  # Backup only: GitHub's own scheduler is often hours late or skips days.
+  # UAE (Asia/Dubai) is UTC+4 with no daylight saving.
   schedule:
-    # UAE (Asia/Dubai) is UTC+4 with no daylight saving.
-    # GitHub sometimes delays or drops scheduled runs, so there are backup times.
-    # Only the first one that runs each day sends the email; the rest skip.
-    - cron: '7 5 * * *'   # 9:07 AM UAE (main)
-    - cron: '37 5 * * *'  # 9:37 AM UAE (backup)
-    - cron: '17 6 * * *'  # 10:17 AM UAE (backup)
-  workflow_dispatch:      # Manual "Run workflow" button always sends
+    - cron: '7 5 * * *'   # 9:07 AM UAE
+    - cron: '37 6 * * *'  # 10:37 AM UAE
 
 # Never let two runs send at the same time.
 concurrency:
@@ -25,14 +31,16 @@ jobs:
     steps:
       - name: Check if today's email was already sent
         id: check
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || inputs.source == 'timer'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          today=$(date -u +%F)
-          count=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-email.yml/runs?event=schedule&status=success&created=%3E%3D${today}" --jq '.total_count')
-          echo "Successful scheduled runs today: $count"
+          # Start of today in UAE time, expressed in UTC
+          since=$(date -u -d "$(TZ=Asia/Dubai date +%F) 00:00 +04:00" +%Y-%m-%dT%H:%M:%SZ)
+          count=$(gh api "repos/${{ github.repository }}/actions/workflows/daily-email.yml/runs?status=success&created=%3E%3D${since}" --jq '.total_count')
+          echo "Successful runs since $since (UAE midnight): $count"
           if [ "$count" -gt 0 ]; then
+            echo "Already sent today - skipping."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
